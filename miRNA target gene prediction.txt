@@ -1,0 +1,15 @@
+library(multiMiR)
+library(magrittr)
+setwd("XXXXX")  #Paths
+example <- get_multimir(
+  mirna = "hsa-miR-378a-3p",  #miRNA
+  org = "hsa",
+  table = "predicted",
+  summary = TRUE,
+  predicted.cutoff = 70,
+  predicted.cutoff.type = "p",
+  predicted.site = "all"
+)
+head(example@data)
+mi2m <- example@data
+write.csv(mi2m, "mi2m.csv", row.names = F)

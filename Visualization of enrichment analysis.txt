@@ -1,0 +1,28 @@
+setwd("xxxxx)# Paths
+library(dplyr)
+bp <- read.table("GO_Biological_Process_2021_table.txt",sep = "\t",header = T,fileEncoding="UTF8")
+bp$ONTOLOGY = 'BP'
+cc <- read.table("GO_Cellular_Component_2021_table.txt",sep = "\t",header = T,fileEncoding="UTF8")
+cc$ONTOLOGY = 'CC'
+mf <- read.table("GO_Molecular_Function_2021_table.txt",sep = "\t",header = T,fileEncoding="UTF8")
+mf$ONTOLOGY = 'MF'
+KEGG <- read.table("KEGG_2021_Human_table (1).txt",sep = "\t",header = T,fileEncoding="UTF8")
+KEGG$ONTOLOGY = 'KEGG'
+ego <- rbind(KEGG)
+ego$number <- factor(rev(1:nrow(ego)))
+ego$logP <- -log10(ego$P.value)
+ego$ONTOLOGY <- factor(ego$ONTOLOGY,levels = c('KEGG'))
+labels <- ego$Term
+names(labels) = rev(1:nrow(ego))
+CPCOLS <- c('#BC3C29FF', '#0072B5FF', '#E18727FF', '#20854EFF','#EE4C97FF')
+
+library(ggplot2)
+ggplot(data=ego, aes(x=number, y=logP, fill=ONTOLOGY)) +
+  geom_bar(stat="identity", width=0.8) + coord_flip() + 
+  scale_fill_manual(values = CPCOLS) + theme_test() + 
+  scale_x_discrete(labels=labels) +
+  xlab("") + ylab("-Log10(P-value)") + 
+  theme(axis.text=element_text(face = "plain"))+
+  theme(axis.text.y=element_text(color=rep(rev(CPCOLS),times = c(9,9,8,9,9)))) + 
+  theme(legend.title=element_blank())
+ggsave("vetical_GO_plot.pdf", height = 10,width = 9)
